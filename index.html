@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>e-Bens Scheduler — HPE Chrome Extension</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hpe-green:      #01A982;
+      --hpe-green-dark: #007A5E;
+      --hpe-green-glow: rgba(1,169,130,0.18);
+      --bg:             #0A0E14;
+      --surface:        #0F1520;
+      --surface-2:      #141C2A;
+      --border:         rgba(255,255,255,0.07);
+      --border-hover:   rgba(1,169,130,0.35);
+      --text:           #E8EDF5;
+      --text-muted:     #6B7A99;
+      --text-dim:       #3A4560;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: rgba(10,14,20,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--hpe-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .nav-pill {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--hpe-green-glow);
+      color: var(--hpe-green);
+      border: 1px solid rgba(1,169,130,0.3);
+    }
+
+    /* HERO */
+    .hero {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      padding-top: 20px;
+    }
+    @media (max-width: 780px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    .hero-left { display: flex; flex-direction: column; gap: 0; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hpe-green);
+      margin-bottom: 18px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--hpe-green);
+      border-radius: 2px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.12;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    h1 span {
+      color: var(--hpe-green);
+    }
+
+    p.lead {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .feature-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--hpe-green);
+      flex-shrink: 0;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: #fff;
+      background: var(--hpe-green);
+      border: 1px solid var(--hpe-green);
+      transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
+      box-shadow: 0 8px 28px rgba(1,169,130,0.3);
+      align-self: flex-start;
+    }
+    .cta:hover {
+      background: var(--hpe-green-dark);
+      box-shadow: 0 12px 36px rgba(1,169,130,0.45);
+      transform: translateY(-1px);
+    }
+    .cta svg { flex-shrink: 0; }
+
+    .disclaimer {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* RIGHT PANEL */
+    .panel {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .panel-bar {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FEBC2E; }
+    .dot-g { background: #28C840; }
+    .panel-bar-label {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+    .panel-body { padding: 18px; }
+
+    .widget-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+    .widget-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .type-btn {
+      border-radius: 8px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .type-btn.active {
+      border-color: var(--hpe-green);
+      background: var(--hpe-green-glow);
+      color: var(--hpe-green);
+    }
+    .type-btn .hrs { font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; color: inherit; }
+
+    .cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .cal-header span { font-size: 12px; font-weight: 600; color: var(--text); }
+    .cal-nav {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mini-cal {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 12px;
+    }
+    .mc-dh { text-align: center; font-size: 9px; font-weight: 600; color: var(--text-dim); padding: 3px 0; }
+    .mc-day {
+      text-align: center;
+      padding: 5px 2px;
+      border-radius: 5px;
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .mc-day.sel { background: var(--hpe-green); color: #fff; font-weight: 700; }
+    .mc-day.today { border: 1px solid rgba(1,169,130,0.4); color: var(--hpe-green); }
+    .mc-day.empty { color: var(--text-dim); }
+
+    .run-bar {
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: var(--hpe-green);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <span class="nav-logo-mark">e</span>
+      e-Bens Scheduler
+    </a>
+    <span class="nav-pill">HPE Internal Tool</span>
+  </nav>
+
+  <main class="hero">
+    <div class="hero-left">
+      <span class="eyebrow">Chrome Extension</span>
+      <h1>e‑Benefits claims,<br><span>automated.</span></h1>
+      <p class="lead">
+        Stop wrestling with the legacy e‑Benefits portal.
+        Pick your dates, choose your claim type, and let the scheduler handle the rest — in seconds.
+      </p>
+      <div class="features">
+        <div class="feature"><span class="feature-dot"></span>Works directly on the existing e‑Benefits UI</div>
+        <div class="feature"><span class="feature-dot"></span>Queue and submit multiple dates at once</div>
+        <div class="feature"><span class="feature-dot"></span>Real-time progress log with smart validation</div>
+        <div class="feature"><span class="feature-dot"></span>Supports &gt; 4 hrs and &lt; 4 hrs claim types</div>
+      </div>
+      <a href="download.html" class="cta">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v9m0 0L4 7m3.5 3L11 7M2 13h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download Extension
+      </a>
+      <p class="disclaimer">Personal helper tool · Not affiliated with any official HPE e‑Benefits provider.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="panel-bar-label">e-Bens Scheduler · Preview</span>
+      </div>
+      <div class="panel-body">
+        <div class="widget-title">⚡ e-Bens Scheduler</div>
+        <div class="widget-sub">Select type + dates, then run</div>
+
+        <div class="type-row">
+          <div class="type-btn active">
+            <span class="hrs">&gt; 4 hrs</span>
+            NSA · Non-Engineering
+          </div>
+          <div class="type-btn">
+            <span class="hrs">&lt; 4 hrs</span>
+            NSA · Non-Engineering
+          </div>
+        </div>
+
+        <div class="cal-header">
+          <div class="cal-nav">‹</div>
+          <span>March 2026</span>
+          <div class="cal-nav">›</div>
+        </div>
+
+        <div class="mini-cal">
+          <div class="mc-dh">Su</div><div class="mc-dh">Mo</div><div class="mc-dh">Tu</div>
+          <div class="mc-dh">We</div><div class="mc-dh">Th</div><div class="mc-dh">Fr</div><div class="mc-dh">Sa</div>
+          <div class="mc-day empty"></div><div class="mc-day empty"></div><div class="mc-day empty"></div><div class="mc-day empty"></div><div class="mc-day empty"></div><div class="mc-day empty"></div><div class="mc-day">1</div>
+          <div class="mc-day">2</div><div class="mc-day">3</div><div class="mc-day sel">4</div><div class="mc-day">5</div><div class="mc-day sel">6</div><div class="mc-day">7</div><div class="mc-day">8</div>
+          <div class="mc-day today">9</div><div class="mc-day">10</div><div class="mc-day">11</div><div class="mc-day sel">12</div><div class="mc-day">13</div><div class="mc-day">14</div><div class="mc-day">15</div>
+          <div class="mc-day">16</div><div class="mc-day">17</div><div class="mc-day">18</div><div class="mc-day">19</div><div class="mc-day">20</div><div class="mc-day">21</div><div class="mc-day">22</div>
+        </div>
+
+        <div class="run-bar">▶  Submit 3 Claims</div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

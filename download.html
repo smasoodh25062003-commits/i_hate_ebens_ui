@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Download — e-Bens Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hpe-green:      #01A982;
+      --hpe-green-dark: #007A5E;
+      --hpe-green-glow: rgba(1,169,130,0.14);
+      --bg:             #0A0E14;
+      --surface:        #0F1520;
+      --surface-2:      #141C2A;
+      --border:         rgba(255,255,255,0.07);
+      --text:           #E8EDF5;
+      --text-muted:     #6B7A99;
+      --text-dim:       #3A4560;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 48px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: rgba(10,14,20,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--hpe-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.12s;
+    }
+    .nav-back:hover { color: var(--text); }
+
+    /* CARD */
+    .card {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .card-header {
+      margin-bottom: 32px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hpe-green);
+      margin-bottom: 14px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--hpe-green);
+      border-radius: 2px;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    p.lead {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* DOWNLOAD BOX */
+    .download-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    @media (max-width: 520px) {
+      .download-box { flex-direction: column; align-items: flex-start; }
+    }
+    .download-info { display: flex; align-items: center; gap: 14px; }
+    .download-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--hpe-green-glow);
+      border: 1px solid rgba(1,169,130,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .download-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .download-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    a.dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: #fff;
+      background: var(--hpe-green);
+      border: 1px solid var(--hpe-green);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.12s;
+      box-shadow: 0 6px 22px rgba(1,169,130,0.28);
+    }
+    a.dl-btn:hover {
+      background: var(--hpe-green-dark);
+      box-shadow: 0 10px 30px rgba(1,169,130,0.42);
+      transform: translateY(-1px);
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0 24px;
+      color: var(--text-dim);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: border-color 0.15s;
+    }
+    .step:hover { border-color: rgba(1,169,130,0.25); }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--hpe-green-glow);
+      border: 1px solid rgba(1,169,130,0.3);
+      color: var(--hpe-green);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body { display: flex; flex-direction: column; gap: 4px; }
+    .step-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .step-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .step-desc code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--hpe-green);
+    }
+
+    /* FOOTER NOTE */
+    .note {
+      margin-top: 24px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .note strong { color: var(--text); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <span class="nav-logo-mark">e</span>
+      e-Bens Scheduler
+    </a>
+    <a class="nav-back" href="index.html">
+      ← Back to overview
+    </a>
+  </nav>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="eyebrow">Installation</div>
+      <h1>Download &amp; install the extension</h1>
+      <p class="lead">
+        Load the e-Bens Scheduler into Chrome in under a minute.
+        No Chrome Web Store needed — just download, unzip, and load.
+      </p>
+    </div>
+
+    <div class="download-box">
+      <div class="download-info">
+        <div class="download-icon">📦</div>
+        <div>
+          <div class="download-name">ebens-extension (1).zip</div>
+          <div class="download-meta">Chrome Extension · Manifest v3 · Unpacked install</div>
+        </div>
+      </div>
+      <a class="dl-btn" href="ebens-extension (1).zip" download="ebens-extension (1).zip">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8m0 0L4 6.5M7 9l3-2.5M1.5 12h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download ZIP
+      </a>
+    </div>
+
+    <div class="divider">Installation steps</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Unzip the downloaded file</div>
+          <div class="step-desc">Extract <code>ebens-extension (1).zip</code> to a permanent folder on your machine — somewhere it won't get moved or deleted.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Open Chrome Extensions</div>
+          <div class="step-desc">In Chrome, navigate to <code>chrome://extensions</code> and toggle on <strong>Developer mode</strong> in the top-right corner.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Load the unpacked extension</div>
+          <div class="step-desc">Click <strong>"Load unpacked"</strong>, then select the <code>ebens-extension</code> folder you just extracted.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Pin &amp; launch on e‑Benefits</div>
+          <div class="step-desc">Pin the extension icon in your Chrome toolbar. Open the e‑Benefits portal, click the icon, then hit <strong>"Launch Scheduler"</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Tip:</strong> keep the extension folder in a stable location. If you move or delete it, Chrome will show an error and you'll need to reload it from <code>chrome://extensions</code>.
+    </div>
+  </div>
+
+</body>
+</html>
